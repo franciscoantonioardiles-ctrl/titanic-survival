@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Titanic Survival Prediction — Francisco Ardiles Miranda</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#e6edf3;font-family:"Segoe UI",sans-serif}
+.topbar{background:#161b22;padding:8px 20px;border-bottom:1px solid #30363d;display:flex;justify-content:space-between;align-items:center}
+.topbar span{color:#8b949e;font-size:.8rem}
+.topbar a{background:#238636;color:white;padding:5px 14px;border-radius:6px;text-decoration:none;font-size:.8rem;font-weight:600}
+.main{padding:20px}
+h1{font-size:1.5rem;color:#58a6ff;text-align:center;margin-bottom:4px}
+.author{text-align:center;color:#a371f7;font-size:.9rem;font-weight:700;margin-bottom:2px}
+.subtitle{text-align:center;color:#8b949e;font-size:.8rem;margin-bottom:18px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.kpi{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;text-align:center}
+.kpi-val{font-size:2rem;font-weight:700}
+.kpi-lbl{font-size:.72rem;color:#8b949e;margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px}
+.card h3{font-size:.78rem;color:#8b949e;margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em}
+.chart-wrap{position:relative;height:200px}
+footer{text-align:center;color:#8b949e;font-size:.7rem;margin-top:20px;padding:10px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span>🚢 Titanic Survival Prediction · Francisco Ardiles Miranda</span>
+  <a href="https://github.com/franciscoantonioardiles-ctrl/titanic-survival" target="_blank">⬅ Ver en GitHub</a>
+</div>
+<div class="main">
+<h1>🚢 Titanic Survival Prediction</h1>
+<p class="author">Francisco Ardiles Miranda · Analista de Datos Profesional Junior · Certificado Google</p>
+<p class="subtitle">Machine Learning + Deep Learning · 5-Fold Cross-Validation · Kaggle Competition</p>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="kpi-val" style="color:#58a6ff">891</div><div class="kpi-lbl">Pasajeros Train</div></div>
+  <div class="kpi"><div class="kpi-val" style="color:#f85149">38.4%</div><div class="kpi-lbl">Tasa Supervivencia</div></div>
+  <div class="kpi"><div class="kpi-val" style="color:#3fb950">0.884</div><div class="kpi-lbl">AUC DL (CV Media)</div></div>
+  <div class="kpi"><div class="kpi-val" style="color:#d29922">5</div><div class="kpi-lbl">Folds Cross-Validation</div></div>
+</div>
+
+<div class="grid3">
+  <div class="card"><h3>Supervivencia por Sexo (%)</h3><div class="chart-wrap"><canvas id="cSex"></canvas></div></div>
+  <div class="card"><h3>Supervivencia por Clase (%)</h3><div class="chart-wrap"><canvas id="cClass"></canvas></div></div>
+  <div class="card"><h3>Supervivencia por Banda de Edad</h3><div class="chart-wrap"><canvas id="cAge"></canvas></div></div>
+</div>
+<div class="grid2">
+  <div class="card"><h3>AUC por Fold — 5-Fold Cross-Validation</h3><div class="chart-wrap"><canvas id="cAUC"></canvas></div></div>
+  <div class="card"><h3>F1-Score por Fold</h3><div class="chart-wrap"><canvas id="cF1"></canvas></div></div>
+</div>
+<div class="grid2">
+  <div class="card"><h3>Importancia de Variables — Random Forest</h3><div class="chart-wrap"><canvas id="cFI"></canvas></div></div>
+  <div class="card"><h3>Comparacion de Modelos — AUC Score</h3><div class="chart-wrap"><canvas id="cModels"></canvas></div></div>
+</div>
+</div>
+
+<script>
+const G={color:"rgba(255,255,255,0.06)"};
+const T={color:"#8b949e",font:{size:10}};
+function C(id){return document.getElementById(id).getContext("2d");}
+
+new Chart(C("cSex"),{type:"bar",
+  data:{labels:["Mujer","Hombre"],datasets:[{data:[74.2,18.9],backgroundColor:["#3fb950","#f85149"],borderRadius:6,borderWidth:0}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{ticks:T,grid:G},y:{ticks:T,grid:G,max:100,title:{display:true,text:"%",color:"#8b949e"}}}}
+});
+new Chart(C("cClass"),{type:"bar",
+  data:{labels:["1a Clase","2a Clase","3a Clase"],datasets:[{data:[63,47.3,24.2],backgroundColor:["#3fb950","#d29922","#f85149"],borderRadius:6,borderWidth:0}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{ticks:T,grid:G},y:{ticks:T,grid:G,max:100,title:{display:true,text:"%",color:"#8b949e"}}}}
+});
+new Chart(C("cAge"),{type:"bar",
+  data:{labels:["Nino","Teen","Adulto","Mayor","Anciano"],datasets:[{data:[58,43,38,41,25],backgroundColor:"rgba(88,166,255,0.8)",borderRadius:6,borderWidth:0}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{ticks:T,grid:G},y:{ticks:T,grid:G,max:70}}}
+});
+new Chart(C("cAUC"),{type:"bar",
+  data:{labels:["Fold 1","Fold 2","Fold 3","Fold 4","Fold 5"],
+    datasets:[{data:[0.9023,0.8812,0.8934,0.8676,0.8791],backgroundColor:["#3fb950","#58a6ff","#58a6ff","#d29922","#58a6ff"],borderRadius:6,borderWidth:0}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{ticks:T,grid:G},y:{ticks:T,grid:G,min:0.85,max:0.92}}}
+});
+new Chart(C("cF1"),{type:"bar",
+  data:{labels:["Fold 1","Fold 2","Fold 3","Fold 4","Fold 5"],
+    datasets:[{data:[0.8028,0.7865,0.7943,0.7939,0.7901],backgroundColor:"rgba(163,113,247,0.85)",borderRadius:6,borderWidth:0}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{ticks:T,grid:G},y:{ticks:T,grid:G,min:0.75,max:0.82}}}
+});
+new Chart(C("cFI"),{type:"bar",
+  data:{labels:["Clase","Embarque","Viaja Solo","Tam.Familia","Parch","SibSp","Banda Edad","Banda Tarifa","Edad","Tarifa","Sexo"],
+    datasets:[{data:[0.06,0.03,0.04,0.05,0.04,0.04,0.07,0.09,0.15,0.17,0.26],
+      backgroundColor:function(ctx){var v=ctx.raw;return v>0.15?"#f85149":v>0.08?"#d29922":"#58a6ff";},
+      borderRadius:4,borderWidth:0}]},
+  options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{ticks:T,grid:G},y:{ticks:{color:"#ccc",font:{size:9}},grid:{display:false}}}}
+});
+new Chart(C("cModels"),{type:"bar",
+  data:{labels:["Red Neuronal CV","Random Forest","Baseline"],
+    datasets:[{data:[0.884,0.87,0.765],backgroundColor:["#3fb950","#58a6ff","#8b949e"],borderRadius:6,borderWidth:0}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{ticks:T,grid:G},y:{ticks:T,grid:G,min:0.7,max:0.92}}}
+});
+</script>
+<footer>🚢 Titanic Survival Prediction · Francisco Ardiles Miranda · Analista de Datos Junior · Certificado Google · github.com/franciscoantonioardiles-ctrl</footer>
+</body>
+</html>
